@@ -65,8 +65,8 @@ def upload_files_to_gcs(bucket_name, uploaded_files, destination_folder, credent
 def main():
     st.title("Upload Files to Google Cloud Storage")
 
-    # Load service account credentials from st.secrets
-    credentials_info = st.secrets["service_account"]
+    # Load service account credentials from st.secrets and make a copy
+    credentials_info = dict(st.secrets["service_account"])
     if not credentials_info:
         st.error("Service account credentials not found in secrets.")
         st.stop()
@@ -75,6 +75,7 @@ def main():
     if isinstance(credentials_info['private_key'], str):
         credentials_info['private_key'] = credentials_info['private_key'].replace('\\n', '\n')
 
+    # Create credentials using the modified credentials_info
     credentials = service_account.Credentials.from_service_account_info(credentials_info)
 
     bucket_name = st.text_input("Enter GCS Bucket Name:")
