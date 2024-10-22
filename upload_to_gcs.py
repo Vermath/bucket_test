@@ -4,20 +4,6 @@ import zipfile
 import tempfile
 from google.cloud import storage
 from google.oauth2 import service_account
-import toml
-
-def load_credentials_from_secrets():
-    """
-    Load service account credentials from secrets.toml.
-    """
-    secrets_path = r'D:\q4callspo\secrets.toml'  # Updated to your specified path
-    try:
-        secrets = toml.load(secrets_path)
-        credentials_info = secrets['service_account']
-        return credentials_info
-    except Exception as e:
-        st.error(f"Error loading credentials from {secrets_path}: {str(e)}")
-        return None
 
 def create_bucket_if_not_exists(bucket_name, credentials):
     """
@@ -79,9 +65,10 @@ def upload_files_to_gcs(bucket_name, uploaded_files, destination_folder, credent
 def main():
     st.title("Upload Files to Google Cloud Storage")
 
-    # Load service account credentials from secrets.toml
-    credentials_info = load_credentials_from_secrets()
+    # Load service account credentials from st.secrets
+    credentials_info = st.secrets["service_account"]
     if not credentials_info:
+        st.error("Service account credentials not found in secrets.")
         st.stop()
 
     # Ensure the private key is properly formatted
